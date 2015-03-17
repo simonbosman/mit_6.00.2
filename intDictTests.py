@@ -29,11 +29,11 @@ class intDict(object):
         return None
     
     def __str__(self):
-        res = '{'
+        res = ''   # Change 1
         for b in self.buckets:
             for t in b:
                 res = res + str(t[0]) + ':' + str(t[1]) + ','
-        return res[:-1] + '}' #res[:-1] removes the last comma
+        return '{' + res[:-1] + '}' # Change 2
 
 
 def collision_prob(numBuckets, numInsertions):
@@ -81,4 +81,20 @@ def main():
     print hash_table.buckets  #evil
     print '\n', 'hash_table =', hash_table
     print hash_table.getValue(15)
+
+main()
+
+print collision_prob(1000, 50)
+print observe_prob(1000, 200, 1000)
+print collision_prob(365, 30)
+print collision_prob(365, 250)
+
+for i in range(1, 366):
+    prob = round(collision_prob(365, i), 3)
+    if prob >= 0.99:
+        print i
+        break
+    
+print collision_prob(365, 57)
+    
 
