@@ -237,10 +237,17 @@ class StandardRobot(Robot):
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
-        raise NotImplementedError
+        pos = self.getRobotPosition()
+        angle = self.getRobotDirection()
+        pos_new = pos.getNewPosition(angle, self.speed)
+        if self.room.isPositionInRoom(pos_new):
+             self.room.cleanTileAtPosition(pos)
+             self.setRobotPosition(pos_new) 
+        else:
+             self.setRobotDirection(random.randrange(0, 360))  
 
 # Uncomment this line to see your implementation of StandardRobot in action!
-##testRobotMovement(StandardRobot, RectangularRoom)
+#testRobotMovement(StandardRobot, RectangularRoom)
 
 
 # === Problem 3
@@ -262,10 +269,30 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
     robot_type: class of robot to be instantiated (e.g. StandardRobot or
                 RandomWalkRobot)
     """
-    raise NotImplementedError
-
+    mean = []
+    for trial in range(num_trials):
+        #anim = ps2_visualize.RobotVisualization(num_robots, width, height)
+        #Make a rectungular room
+        room = RectangularRoom(width, height)
+        #Make some robots
+        robots = []
+        for n in range(num_robots):
+            robots.append(robot_type(room, speed))
+   
+        #make the robots clean the room
+        total_steps = 0
+        while room.getNumCleanedTiles() < min_coverage * room.getNumTiles():
+            for robot in robots:
+                 total_steps += 1
+                 #anim.update(room, robots)
+                 robot.updatePositionAndClean() 
+        mean.append(total_steps/num_robots)
+        #anim.done()
+    return sum(mean) / float(len(mean)) 
+    
+     
 # Uncomment this line to see how much your simulation takes on average
-##print  runSimulation(1, 1.0, 10, 10, 0.75, 30, StandardRobot)
+#print  runSimulation(1, 1.0, 5, 5, 1.00, 30, StandardRobot)
 
 
 # === Problem 4
@@ -281,7 +308,15 @@ class RandomWalkRobot(Robot):
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
-        raise NotImplementedError
+        pos = self.getRobotPosition()
+        angle = self.getRobotDirection()
+        pos_new = pos.getNewPosition(angle, self.speed)
+        if self.room.isPositionInRoom(pos_new):
+            self.room.cleanTileAtPosition(pos)
+            self.setRobotPosition(pos_new) 
+        self.setRobotDirection(random.randrange(0, 360))  
+
+print  runSimulation(3, 1.0, 5, 5, 1.0, 1, RandomWalkRobot)
 
 
 def showPlot1(title, x_label, y_label):
@@ -330,8 +365,9 @@ def showPlot2(title, x_label, y_label):
 #
 # 1) Write a function call to showPlot1 that generates an appropriately-labeled
 #     plot.
-#
-#       (... your call here ...)
+
+showPlot1('Cleaning time', 'robots', 'time-steps')
+
 #
 
 #
@@ -341,12 +377,4 @@ def showPlot2(title, x_label, y_label):
 #       (... your call here ...)
 #
 
-room = RectangularRoom(6,1)
-room.cleanTileAtPosition(Position(1.6, 0.3))
-print room.tiles
-print room.isTileCleaned(1,0)
-print room.getNumCleanedTiles()
-pos = room.getRandomPosition()
-print pos
-print room.isPositionInRoom(pos)
-
+#showPlot2('Cleaning time', 'aspect-ratio','time-steps') 
