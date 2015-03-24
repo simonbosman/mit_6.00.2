@@ -271,7 +271,7 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
     """
     mean = []
     for trial in range(num_trials):
-        #anim = ps2_visualize.RobotVisualization(num_robots, width, height)
+        anim = ps2_visualize.RobotVisualization(num_robots, width, height)
         #Make a rectungular room
         room = RectangularRoom(width, height)
         #Make some robots
@@ -284,10 +284,10 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
         while room.getNumCleanedTiles() < min_coverage * room.getNumTiles():
             for robot in robots:
                  total_steps += 1
-                 #anim.update(room, robots)
+                 anim.update(room, robots)
                  robot.updatePositionAndClean() 
         mean.append(total_steps/num_robots)
-        #anim.done()
+        anim.done()
     return sum(mean) / float(len(mean)) 
     
      
@@ -316,7 +316,7 @@ class RandomWalkRobot(Robot):
             self.setRobotPosition(pos_new) 
         self.setRobotDirection(random.randrange(0, 360))  
 
-print  runSimulation(3, 1.0, 5, 5, 1.0, 1, RandomWalkRobot)
+print  runSimulation(1, 1.0, 5, 5, 1.0, 1, StandardRobot)
 
 
 def showPlot1(title, x_label, y_label):
@@ -366,7 +366,7 @@ def showPlot2(title, x_label, y_label):
 # 1) Write a function call to showPlot1 that generates an appropriately-labeled
 #     plot.
 
-showPlot1('Cleaning time', 'robots', 'time-steps')
+#showPlot1('Cleaning time', 'robots', 'time-steps')
 
 #
 
