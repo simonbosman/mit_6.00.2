@@ -453,16 +453,44 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
     numTrials: number of simulation runs to execute (an integer)
     
     """
-
-    # TODO
+    virusPop = [0] * 300
+    virusPopRes = [0] * 300
+    
+    for numTrial in range(numTrials):
+        #create some resistant viruses
+        viruses = [ResistantVirus(maxBirthProb, clearProb, resistances, mutProb) for virus in range(numViruses)] 
+        #infect the patient 
+        patient = TreatedPatient(viruses, maxPop)
+        #run simulation for 150 time steps
+        for idx in range(150):
+            virusPop[idx] += patient.update()
+            virusPopRes[idx] += patient.getResistPop(['guttagonol'])
+        #add guttagonol
+        patient.addPrescription('guttagonol')
+        #run simulation for 150 time steps again
+        for idx in range(150, 300):
+            virusPop[idx] += patient.update()
+            virusPopRes[idx] += patient.getResistPop(['guttagonol'])
+      
+    virusPopMean = [virus / float(numTrials) for virus in virusPop]
+    virusPopResMean = [virus / float(numTrials) for virus in virusPopRes] 
+    #Plot the graph
+    pylab.plot(range(300), virusPopMean)
+    pylab.plot(range(300), virusPopResMean)
+    pylab.title('Simulation with drug')
+    pylab.xlabel('Time steps')
+    pylab.ylabel('Average population size')
+    pylab.legend(['Tot pop', 'Tot pop res'])
+    pylab.show()
+        
     
 
 #print simulationWithoutDrug(100, 1000, 0.1, 0.05, 100) 
 
-    
-    
-virus = ResistantVirus(1.0, 0.0, {}, 0.0)
-patient = TreatedPatient([virus], 100)
-
-for i in range(10):
-    print patient.update()
+#virus = ResistantVirus(1.0, 0.0, {}, 0.0)
+#patient = TreatedPatient([virus], 100)
+#
+#for i in range(10):
+#    print patient.update()
+#simulationWithDrug(1, 10, 1.0, 0.0, {}, 1.0, 5)
+simulationWithDrug(75, 100, .8, 0.1, {"guttagonol": True}, 0.8, 20)
