@@ -485,12 +485,4 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
         
     
 
-#print simulationWithoutDrug(100, 1000, 0.1, 0.05, 100) 
-
-#virus = ResistantVirus(1.0, 0.0, {}, 0.0)
-#patient = TreatedPatient([virus], 100)
-#
-#for i in range(10):
-#    print patient.update()
-#simulationWithDrug(1, 10, 1.0, 0.0, {}, 1.0, 5)
 simulationWithDrug(75, 100, .8, 0.1, {"guttagonol": True}, 0.8, 20)
