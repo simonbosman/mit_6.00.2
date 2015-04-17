@@ -110,5 +110,5 @@ def simulationTwoDrugsDelayedTreatment(numTrials):
 
 
 #simulationDelayedTreatment(1000)
-simulationTwoDrugsDelayedTreatment(1)               
+simulationTwoDrugsDelayedTreatment(10)               
                        

@@ -21,6 +21,8 @@ class Node(object):
         # Override the default hash method
         # Think: Why would we want to do this?
         return self.name.__hash__()
+        #Because the default hash function used the id of the object
+        #So two similair nodes are not the same when the default hash function is used
 
 class Edge(object):
     def __init__(self, src, dest):
@@ -103,6 +105,7 @@ class WeightedDigraph(Digraph):
                 res = '{0}{1}->{2} {3}\n'.format(res, k, d[0], d[1])
         return res[:-1]
                 
+                 
 g = WeightedDigraph()
 na = Node('a')
 nb = Node('b')
