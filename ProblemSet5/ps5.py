@@ -81,7 +81,7 @@ def findValidPaths(graph, start, end, maxDistOutdoors=1.0, s=[]):
         tmpPath = s.pop(0)
         lastNode = tmpPath[len(tmpPath) -1]
         
-        #Found a path within constraints maxDistOutdoors
+        #Found a path, check if its within constraints maxDistOutdoors
         if lastNode == end:
             #Found a path, check if its within the constraint
             totalDist = 0
@@ -95,7 +95,7 @@ def findValidPaths(graph, start, end, maxDistOutdoors=1.0, s=[]):
             if not totalDist > maxDistOutdoors:
                 foundPaths.append([node.getName() for node in tmpPath])
         
-        
+        #add children of the node on the stack, avoid loops
         for child in graph.childrenOf(lastNode):
             if child not in tmpPath:
                 newPath = tmpPath + [child]
@@ -157,6 +157,20 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors):
 #
 # Problem 4: Finding the Shorest Path using Optimized Search Method
 #
+def getTotalDistances(graph, path):
+    totalDist = 0
+    totalOutdoors = 0
+    
+    for idx in range(len(path)-1):
+        #check every edge in node
+        for d in graph.edges[Node(path[idx])]:
+            #if destination edge is next element in path
+            if d[0] == Node(path[idx+1]):
+                totalDist += d[1][0]
+                totalOutdoors += d[1][1]
+    return totalDist, totalOutdoors
+   
+
 def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
     """
     Finds the shortest path from start to end using directed depth-first.
@@ -182,9 +196,39 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
         If there exists no path that satisfies maxTotalDist and
         maxDistOutdoors constraints, then raises a ValueError.
     """
-    #TODO
-    pass
-
+    start = Node(start)
+    end = Node(end)
+    initPath = [start]
+    s = []
+    s.insert(0, initPath)
+    bestTotal = None
+    bestPath = None
+    while len(s) != 0:
+        tmpPath = s.pop(0)
+        lastNode = tmpPath[len(tmpPath) -1]
+        
+        #Found a path, check if it is the best path so far
+        if lastNode == end:
+            distances = getTotalDistances(digraph, tmpPath)
+            if bestTotal == None or distances[0] <= bestTotal:
+                bestTotal = distances[0]
+                bestPath = tmpPath
+        
+        #add children of the node on the stack, avoid loops
+        for child in digraph.childrenOf(lastNode):
+            if child not in tmpPath:
+                #Check for totalDistance and totalDistOutdoors
+                newPath = tmpPath + [child]
+                distances = getTotalDistances(digraph, newPath)
+                if distances[1] <= float(maxDistOutdoors):
+                    if distances[0] <= float(maxTotalDist):
+                        s.insert(0, newPath)
+       
+    if bestPath == None:
+        raise ValueError
+    else:
+        return [node.getName() for node in bestPath]
+            
 # Uncomment below when ready to test
 #### NOTE! These tests may take a few minutes to run!! ####
 if __name__ == '__main__':
@@ -292,25 +336,25 @@ if __name__ == '__main__':
 #     print "Did DFS search raise an error?", dfsRaisedErr
 
 #     Test case 8
-    #print "---------------"
-    #print "Test case 8:"
-    #print "Find the shortest-path from Building 10 to 32 without walking"
-    #print "more than 100 meters in total"
-    #bruteRaisedErr = 'No'
-#     dfsRaisedErr = 'No'
+    print "---------------"
+    print "Test case 8:"
+    print "Find the shortest-path from Building 10 to 32 without walking"
+    print "more than 100 meters in total"
+    bruteRaisedErr = 'No'
+    dfsRaisedErr = 'No'
     #try:
     #    bruteForceSearch(mitMap, '10', '32', 100, LARGE_DIST)
     #except ValueError:
     #    bruteRaisedErr = 'Yes'
+    #
+    try:
+         directedDFS(mitMap, '10', '32', 100, LARGE_DIST)
+    except ValueError:
+         dfsRaisedErr = 'Yes'
     
-#     try:
-#         directedDFS(mitMap, '10', '32', 100, LARGE_DIST)
-#     except ValueError:
-#         dfsRaisedErr = 'Yes'
-    
-    #print "Expected: No such path! Should throw a value error."
-    #print "Did brute force search raise an error?", bruteRaisedErr
-#     print "Did DFS search raise an error?", dfsRaisedErr
+    print "Expected: No such path! Should throw a value error."
+    print "Did brute force search raise an error?", bruteRaisedErr
+    print "Did DFS search raise an error?", dfsRaisedErr
 
 g = WeightedDigraph()
 g.addNode(Node(1))
@@ -334,7 +378,6 @@ g.addEdge(e4)
 #g.addEdge(e6)
 
 #print bruteForceSearch(g, "4", "5", 20, 1)
-
 #print bruteForceSearch(g, "1", "5", 35, 9)
 #print bruteForceSearch(g, "1", "5", 35, 8)
 #print bruteForceSearch(g, "4", "5", 21, 11)
@@ -342,5 +385,7 @@ g.addEdge(e4)
 #print bruteForceSearch(g, "4", "5", 19, 1)
 #print bruteForceSearch(g, "3", "2", 100, 100)
 #print bruteForceSearch(g, "4", "5", 8, 2)
-print bruteForceSearch(g, "1", "3", 15, 15)
-print g
+#print bruteForceSearch(g, "1", "3", 15, 15)
+#print g
+#print directedDFS(g, "1", "3", 18, 18)
+#print directedDFS(g, "1", "3", 15, 15)
