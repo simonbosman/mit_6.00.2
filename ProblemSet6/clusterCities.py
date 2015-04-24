@@ -135,20 +135,33 @@ class ClusterSet(object):
         """ Assumes clusters c1 and c2 are in self
         Adds to self a cluster containing the union of c1 and c2
         and removes c1 and c2 from self """
-        # TO DO
-        pass
+        cMerged = Cluster([p for p in c1.members()] + [p for p in c2.members()], City) 
+        self.add(cMerged)
+        self.members.remove(c1)
+        self.members.remove(c2)
     def findClosest(self, linkage):
         """ Returns a tuple containing the two most similar 
         clusters in self
         Closest defined using the metric linkage """
-        # TO DO
-        pass
+        clusters = self.getClusters()
+        numClusters = self.numClusters()
+        minDist = None
+        minClusters = ()
+        for c1 in clusters:
+            for c2 in clusters:
+                if c1 != c2:
+                    dist = linkage(c1, c2)
+                    if dist < minDist or minDist == None:
+                        minDist = dist
+                        minClusters = (c1, c2)
+        return minClusters                              
     def mergeOne(self, linkage):
         """ Merges the two most simililar clusters in self
         Similar defined using the metric linkage
         Returns the clusters that were merged """
-        # TO DO
-        pass
+        clusters = self.findClosest(linkage)
+        self.mergeClusters(clusters[0], clusters[1])
+        return clusters
     def numClusters(self):
         return len(self.members)
     def toStr(self):
@@ -232,38 +245,45 @@ def hCluster(points, linkage, numClusters, printHistory):
             names2 = []
             for p in history[i][1].members():
                 names2.append(p.getName())
-            print 'Step', i, 'Merged', names1, 'with', names2members()
+            print 'Step', i, 'Merged', names1, 'with', names2
             print ''
     print 'Final set of clusters:'
     print cS.toStr()
     return cS
 
 def test():
-    points = buildCityPoints('/home/simon/Source/mit_600.2/ProblemSet6/cityTemps.txt', False)
-    print points[0]
+    points = buildCityPoints('/home/simon/Source/mit_600.2/ProblemSet6/cityTemps.txt', True)
     #hCluster(points, Cluster.singleLinkageDist, 10, False)
     #points = buildCityPoints('cityTemps.txt', True)
     #hCluster(points, Cluster.maxLinkageDist, 10, False)
     #hCluster(points, Cluster.averageLinkageDist, 10, False)
     #hCluster(points, Cluster.singleLinkageDist, 10, False)
+    hCluster(points, Cluster.singleLinkageDist, 5, False)
+    #hCluster(points, Cluster.singleLinkageDist, 5, True)
 
-#test()
 
-points = buildCityPoints('/home/simon/Source/mit_600.2/ProblemSet6/cityTemps.txt', False)
-cS = ClusterSet(City)
+test()
 
-pointsToAdd = []
-for idx in range(5):
-    pointsToAdd += [points[idx]]
-cS.add(Cluster(pointsToAdd,City))
-
-pointsToAdd = []
-for idx in range(5,10):
-    pointsToAdd+= [points[idx]]
-cS.add(Cluster(pointsToAdd,City))
-
-clusters = cS.getClusters()
-print clusters
-print clusters[0].singleLinkageDist(clusters[1])
-print clusters[0].maxLinkageDist(clusters[1])
-print clusters[0].averageLinkageDist(clusters[1])
+#points = buildCityPoints('/home/simon/Source/mit_600.2/ProblemSet6/cityTemps.txt', False)
+#cS = ClusterSet(City)
+#
+#pointsToAdd = []
+#for idx in range(5):
+#    pointsToAdd += [points[idx]]
+#cS.add(Cluster(pointsToAdd,City))
+#
+#pointsToAdd = []
+#for idx in range(5,10):
+#    pointsToAdd+= [points[idx]]
+#cS.add(Cluster(pointsToAdd, City))
+#
+#clusters = cS.getClusters()
+#print clusters
+#print clusters[0].singleLinkageDist(clusters[1])
+#print clusters[0].maxLinkageDist(clusters[1])
+#print clusters[0].averageLinkageDist(clusters[1])
+#print ''
+#ctuple = cS.findClosest(Cluster.maxLinkageDist)
+#for el in ctuple:
+#    print el
+#print cS.mergeOne(Cluster.maxLinkageDist)
