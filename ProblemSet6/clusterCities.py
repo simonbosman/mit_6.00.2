@@ -150,6 +150,7 @@ class ClusterSet(object):
         for c1 in clusters:
             for c2 in clusters:
                 if c1 != c2:
+                    #Call the linkage function of object c1
                     dist = linkage(c1, c2)
                     if dist < minDist or minDist == None:
                         minDist = dist
@@ -258,7 +259,7 @@ def test():
     #hCluster(points, Cluster.maxLinkageDist, 10, False)
     #hCluster(points, Cluster.averageLinkageDist, 10, False)
     #hCluster(points, Cluster.singleLinkageDist, 10, False)
-    hCluster(points, Cluster.singleLinkageDist, 5, False)
+    hCluster(points, Cluster.singleLinkageDist, 5, True)
     #hCluster(points, Cluster.singleLinkageDist, 5, True)
 
 
